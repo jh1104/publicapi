@@ -5,6 +5,7 @@
 ## 기능
 
 * [특일 정보 조회 API](https://www.data.go.kr/data/15012690/openapi.do)
+* [단기 예보 조회 API](https://www.data.go.kr/data/15084084/openapi.do)
 
 ## 설치
 

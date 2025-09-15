@@ -1,7 +1,7 @@
 package forecast
 
 // 단기 예보 조회 시 사용되는 예보 구분 코드.
-type ForecastCategory = string
+type ForecastCategory string
 
 const (
 	// 기온 (°C).
@@ -27,7 +27,7 @@ const (
 )
 
 // 강수형태 코드.
-type PrecipitationCode = string
+type PrecipitationCode string
 
 const (
 	// 없음
@@ -49,7 +49,7 @@ const (
 )
 
 // 하늘상태 코드.
-type SkyCode = string
+type SkyCode string
 
 const (
 	// 맑음

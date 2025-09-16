@@ -4,7 +4,7 @@ tasks:
   test:
     desc: "Run tests"
     cmds:
-      - go test -coverprofile=cover.out -shuffle=on -race ./...
+      - go test -coverprofile=cover-unit.out -shuffle=on -race ./...
 
   integration-test:
     desc: "Run integration tests"
@@ -12,4 +12,4 @@ tasks:
     env:
       INTEGRATION_TEST: on
     cmds:
-      - go test -coverprofile=integrataion-cover.out ./...
+      - go test -coverprofile=cover-integration.out ./...

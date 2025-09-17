@@ -26,7 +26,7 @@ func main() {
 		panic(err)
 	}
 
-	for _, item := range resp.Body.Items() {
+	for _, item := range resp.Body.Data.Items {
 		fmt.Printf("날짜: %d, 이름: %s\n", item.Date, item.Name)
 	}
 }

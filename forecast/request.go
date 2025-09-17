@@ -4,14 +4,19 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"sync/atomic"
 
 	"github.com/jh1104/publicapi"
 )
 
-var defaultClient *publicapi.Client
+var defaultClient atomic.Pointer[publicapi.Client]
+
+func DefaultClient() *publicapi.Client {
+	return defaultClient.Load()
+}
 
 func SetDefaultClient(client *publicapi.Client) {
-	defaultClient = client
+	defaultClient.Store(client)
 }
 
 func GetUltraShortTermForecast(ctx context.Context, nx, ny int) (*Response, error) {
@@ -23,11 +28,12 @@ func GetUltraShortTermForecast(ctx context.Context, nx, ny int) (*Response, erro
 }
 
 func request(ctx context.Context, api publicapi.API) (*Response, error) {
-	if defaultClient == nil {
+	client := DefaultClient()
+	if client == nil {
 		return nil, errors.New("default client is not initialized")
 	}
 
-	data, err := defaultClient.RequestAPI(ctx, api)
+	data, err := client.RequestAPI(ctx, api)
 	if err != nil {
 		return nil, err
 	}

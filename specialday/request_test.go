@@ -30,39 +30,39 @@ func TestRequestAPI(t *testing.T) {
 	}{
 		{
 			name:      "2025-05 공휴일 조회",
-			params:    specialday.Parameters{2025, 5, 10, 1},
+			params:    specialday.NewParameters(2025, 5),
 			fn:        specialday.ListHolidays,
 			wantItems: 3,
 		},
 		{
 			name:      "2025-05 국경일 조회",
-			params:    specialday.Parameters{2025, 5, 10, 1},
+			params:    specialday.NewParameters(2025, 5),
 			fn:        specialday.ListNationalHolidays,
 			wantItems: 3,
 		},
 		{
 			name:      "2025-05 기념일 조회",
-			params:    specialday.Parameters{2025, 5, 10, 1},
+			params:    specialday.NewParameters(2025, 5),
 			fn:        specialday.ListAnniversaries,
 			wantItems: 10,
 		},
 		{
 			name:      "2025-10 공휴일 조회",
-			params:    specialday.Parameters{2025, 10, 20, 1},
+			params:    specialday.NewParameters(2025, 10),
 			fn:        specialday.ListHolidays,
 			wantItems: 6,
 		},
 		{
 			name:      "2025-10 국경일 조회",
-			params:    specialday.Parameters{2025, 10, 20, 1},
+			params:    specialday.NewParameters(2025, 10),
 			fn:        specialday.ListNationalHolidays,
 			wantItems: 6,
 		},
 		{
 			name:      "2025-10 기념일 조회",
-			params:    specialday.Parameters{2025, 10, 20, 1},
+			params:    specialday.NewParameters(2025, 10),
 			fn:        specialday.ListAnniversaries,
-			wantItems: 14,
+			wantItems: 10,
 		},
 	}
 

@@ -27,7 +27,7 @@ type Client struct {
 func NewClient(serviceKey string) *Client {
 	return &Client{
 		ServiceKey: serviceKey,
-		HTTPClient: DefaultClient,
+		HTTPClient: DefaultHTTPClient,
 	}
 }
 

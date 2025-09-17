@@ -1,29 +1,63 @@
 package specialday
 
-// 특일 조회 API 파라미터.
-type Parameters struct {
-	// 조회 연도.
-	Year int
-	// 조회 월.
-	Month int
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"sync/atomic"
 
-	// 한 페이지의 아이템 수.
-	NumberOfRows int
-	// 페이지 번호.
-	PageNo int
+	"github.com/jh1104/publicapi"
+)
+
+var defaultClient atomic.Pointer[publicapi.Client]
+
+func DefaultClient() *publicapi.Client {
+	return defaultClient.Load()
 }
 
-func NewParameters(year int, month int) Parameters {
-	return Parameters{
-		Year:         year,
-		Month:        month,
-		NumberOfRows: 10,
-		PageNo:       1,
+func SetDefaultClient(client *publicapi.Client) {
+	defaultClient.Store(client)
+}
+
+func ListHolidays(ctx context.Context, year, month int) (*Response, error) {
+	api := &SpecialDay{
+		Subtype: Holiday,
+		Params:  NewParameters(year, month),
 	}
+	return request(ctx, api)
 }
 
-// 현재 Parameters에서 페이지 번호를 1 증가시킨 새로운 Parameters를 반환합니다.
-func (p Parameters) NextPage() Parameters {
-	p.PageNo++
-	return p
+func ListNationalHolidays(ctx context.Context, year, month int) (*Response, error) {
+	api := &SpecialDay{
+		Subtype: NationalHoliday,
+		Params:  NewParameters(year, month),
+	}
+	return request(ctx, api)
+}
+
+func ListAnniversaries(ctx context.Context, year, month int) (*Response, error) {
+	api := &SpecialDay{
+		Subtype: Anniversary,
+		Params:  NewParameters(year, month),
+	}
+	return request(ctx, api)
+}
+
+func request(ctx context.Context, api publicapi.API) (*Response, error) {
+	client := DefaultClient()
+	if client == nil {
+		return nil, errors.New("default client is not initialized")
+	}
+
+	data, err := client.RequestAPI(ctx, api)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &Response{}
+	if err := json.Unmarshal(data, resp); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }

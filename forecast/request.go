@@ -19,10 +19,10 @@ func SetDefaultClient(client *publicapi.Client) {
 	defaultClient.Store(client)
 }
 
-func GetUltraShortTermForecast(ctx context.Context, nx, ny int) (*Response, error) {
+func GetUltraShortTermForecast(ctx context.Context, params Parameters) (*Response, error) {
 	api := &Forecast{
 		Subtype: UltraShortTermForecast,
-		Params:  *NewParameters(nx, ny),
+		Params:  params,
 	}
 	return request(ctx, api)
 }

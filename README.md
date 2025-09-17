@@ -21,7 +21,8 @@ func main() {
 	specialday.SetDefaultClient(client)
 
 	// 2025년 5월 공휴일 조회.
-	resp, err := specialday.ListHolidays(context.Background(), 2025, 5)
+	params := specialday.NewParameters(2025, 5)
+	resp, err := specialday.ListHolidays(context.Background(), params)
 	if err != nil {
 		panic(err)
 	}

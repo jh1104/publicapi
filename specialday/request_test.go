@@ -24,58 +24,51 @@ func TestRequestAPI(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		year      int
-		month     int
-		fn        func(ctx context.Context, year, month int) (*specialday.Response, error)
+		params    specialday.Parameters
+		fn        func(context.Context, specialday.Parameters) (*specialday.Response, error)
 		wantItems int
 	}{
 		{
 			name:      "2025-05 공휴일 조회",
-			year:      2025,
-			month:     5,
+			params:    specialday.Parameters{2025, 5, 10, 1},
 			fn:        specialday.ListHolidays,
 			wantItems: 3,
 		},
 		{
 			name:      "2025-05 국경일 조회",
-			year:      2025,
-			month:     5,
+			params:    specialday.Parameters{2025, 5, 10, 1},
 			fn:        specialday.ListNationalHolidays,
 			wantItems: 3,
 		},
 		{
 			name:      "2025-05 기념일 조회",
-			year:      2025,
-			month:     5,
+			params:    specialday.Parameters{2025, 5, 10, 1},
 			fn:        specialday.ListAnniversaries,
 			wantItems: 10,
 		},
 		{
 			name:      "2025-10 공휴일 조회",
-			year:      2025,
-			month:     10,
+			params:    specialday.Parameters{2025, 10, 20, 1},
 			fn:        specialday.ListHolidays,
 			wantItems: 6,
 		},
 		{
 			name:      "2025-10 국경일 조회",
-			year:      2025,
-			month:     10,
+			params:    specialday.Parameters{2025, 10, 20, 1},
 			fn:        specialday.ListNationalHolidays,
 			wantItems: 6,
 		},
 		{
 			name:      "2025-10 기념일 조회",
-			year:      2025,
-			month:     10,
+			params:    specialday.Parameters{2025, 10, 20, 1},
 			fn:        specialday.ListAnniversaries,
-			wantItems: 10,
+			wantItems: 14,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			resp, err := tt.fn(context.Background(), tt.year, tt.month)
+			resp, err := tt.fn(context.Background(), tt.params)
 			if err != nil {
 				t.Fatalf("failed to request API: %v", err)
 			}

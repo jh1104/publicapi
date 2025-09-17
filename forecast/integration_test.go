@@ -2,14 +2,16 @@ package forecast_test
 
 import (
 	"context"
+	"encoding/json"
 	"os"
 	"testing"
 	"time"
 
+	"github.com/jh1104/publicapi"
 	"github.com/jh1104/publicapi/forecast"
 )
 
-func TestRequest(t *testing.T) {
+func TestRequestAPI(t *testing.T) {
 	if os.Getenv("INTEGRATION_TEST") != "on" {
 		t.Skip("skipping integration test")
 	}
@@ -22,33 +24,35 @@ func TestRequest(t *testing.T) {
 	// 현재 시간 기준으로 baseDate와 baseTime 설정한다.
 	baseDate, baseTime := forecast.BaseForUltraShortTermForecast(time.Now())
 
-	client := forecast.NewClient(key)
+	client := publicapi.NewClient(key)
 
 	tests := []struct {
 		name      string
-		params    forecast.Parameters
-		fn        func(context.Context, forecast.Parameters) (*forecast.Response, error)
+		api       publicapi.API
 		wantItems int
 	}{
 		{
 			name:      "서울시청 좌표 초단기예보 조회",
-			params:    forecast.Parameters{baseDate, baseTime, 60, 127, 5, 1},
-			fn:        client.GetUltraShortTermForecast,
+			api:       forecast.NewForecast(forecast.UltraShortTermForecast, forecast.Parameters{baseDate, baseTime, 60, 127, 5, 1}),
 			wantItems: 5,
 		},
 		{
 			name:      "부산시청 좌표 초단기예보 조회",
-			params:    forecast.Parameters{baseDate, baseTime, 98, 76, 10, 1},
-			fn:        client.GetUltraShortTermForecast,
+			api:       forecast.NewForecast(forecast.UltraShortTermForecast, forecast.Parameters{baseDate, baseTime, 98, 76, 10, 1}),
 			wantItems: 10,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			resp, err := tt.fn(context.Background(), tt.params)
+			data, err := client.RequestAPI(context.Background(), tt.api)
 			if err != nil {
 				t.Fatalf("failed to request API: %v", err)
+			}
+
+			resp := &forecast.Response{}
+			if err := json.Unmarshal(data, resp); err != nil {
+				t.Fatalf("failed to unmarshal response: %v", err)
 			}
 
 			if resp.Header.Code != "00" {

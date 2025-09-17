@@ -1,86 +1,59 @@
 package specialday_test
 
 import (
-	"context"
-	"os"
 	"testing"
 
 	"github.com/jh1104/publicapi/specialday"
 )
 
-func TestRequest(t *testing.T) {
-	if os.Getenv("INTEGRATION_TEST") != "on" {
-		t.Skip("skipping integration test")
+func TestNewParameters(t *testing.T) {
+	params := specialday.NewParameters(2025, 10)
+	if params.Year != 2025 {
+		t.Errorf("want Year 2025, got %d", params.Year)
 	}
-
-	key, ok := os.LookupEnv("PUBLIC_API_SERVICE_KEY")
-	if !ok {
-		t.Fatal("PUBLIC_API_SERVICE_KEY environment variable is required")
+	if params.Month != 10 {
+		t.Errorf("want Month 10, got %d", params.Month)
 	}
+}
 
-	client := specialday.NewClient(key)
-
+func TestNextPage(t *testing.T) {
 	tests := []struct {
-		name      string
-		params    specialday.Parameters
-		f         func(context.Context, specialday.Parameters) (*specialday.Response, error)
-		wantItems int
+		name  string
+		input specialday.Parameters
+		want  specialday.Parameters
 	}{
 		{
-			name:      "2025-05 공휴일 조회",
-			params:    specialday.Parameters{2025, 05, 10, 1},
-			f:         client.ListHolidays,
-			wantItems: 3,
+			name:  "1 페이지에서 다음 페이지로",
+			input: specialday.Parameters{NumberOfRows: 10, PageNo: 1},
+			want:  specialday.Parameters{NumberOfRows: 10, PageNo: 2},
 		},
 		{
-			name:      "2025-05 국경일 조회",
-			params:    specialday.Parameters{2025, 05, 10, 1},
-			f:         client.ListNationalHolidays,
-			wantItems: 3,
+			name:  "5 페이지에서 다음 페이지로",
+			input: specialday.Parameters{NumberOfRows: 20, PageNo: 5},
+			want:  specialday.Parameters{NumberOfRows: 20, PageNo: 6},
 		},
 		{
-			name:      "2025-05 기념일 조회",
-			params:    specialday.Parameters{2025, 05, 20, 1},
-			f:         client.ListAnniversaries,
-			wantItems: 15,
-		},
-		{
-			name:      "2025-10 공휴일 조회",
-			params:    specialday.Parameters{2025, 10, 10, 1},
-			f:         client.ListHolidays,
-			wantItems: 6,
-		},
-		{
-			name:      "2025-10 국경일 조회",
-			params:    specialday.Parameters{2025, 10, 10, 1},
-			f:         client.ListNationalHolidays,
-			wantItems: 6,
-		},
-		{
-			name:      "2025-10 기념일 조회",
-			params:    specialday.Parameters{2025, 10, 20, 1},
-			f:         client.ListAnniversaries,
-			wantItems: 14,
+			name:  "0 페이지에서 다음 페이지로",
+			input: specialday.Parameters{NumberOfRows: 15, PageNo: 0},
+			want:  specialday.Parameters{NumberOfRows: 15, PageNo: 1},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			resp, err := tt.f(context.Background(), tt.params)
-			if err != nil {
-				t.Fatalf("")
+			got := tt.input.NextPage()
+
+			if got.PageNo != tt.want.PageNo {
+				t.Errorf("want %d, got %d", tt.want.PageNo, got.PageNo)
 			}
 
-			if resp.Header.Code != "00" {
-				t.Fatalf("want code 00, got code=%s message=%s", resp.Header.Code, resp.Header.Message)
+			if got.NumberOfRows != tt.want.NumberOfRows {
+				t.Errorf("want %d, got %d", tt.want.NumberOfRows, got.NumberOfRows)
 			}
 
-			if resp.Body == nil {
-				t.Fatal("want body not nil, got nil")
-			}
-
-			if len(resp.Body.Data.Items) != tt.wantItems {
-				t.Fatalf("want items %d, got %d", tt.wantItems, len(resp.Body.Data.Items))
+			// 원본 파라미터가 변경되지 않았는지 확인
+			if tt.input.PageNo != tt.want.PageNo-1 {
+				t.Errorf("want no change in original, got %d", tt.input.PageNo)
 			}
 		})
 	}

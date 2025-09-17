@@ -16,34 +16,17 @@ go get github.com/jh1104/publicapi
 ## 사용법
 
 ```go
-package main
-
-import (
-    "fmt"
-
-    "github.com/jh1104/publicapi/specialday"
-)
-
 func main() {
-    // 클라이언트 생성
-    client := specialday.NewClient("YOUR_API_KEY")
+	client := publicapi.NewClient("YOUR_SERVICE_KEY")
+	specialday.SetDefaultClient(client)
 
-	// 2025년 5월 조회
-	params := specialday.Parameters{
-		Year:         2025,
-		Month:        05,
-		NumberOfRows: 10,
-		PageNo:       1,
-	}
-
-    // 공휴일 조회 API 호출
-	resp, err := client.ListNationalHolidays(context.Background(), params)
+	// 2025년 5월 공휴일 조회.
+	resp, err := specialday.ListHolidays(context.Background(), 2025, 5)
 	if err != nil {
 		panic(err)
 	}
 
-	// 결과 출력
-	for _, item := range resp.Body.Data.Items {
+	for _, item := range resp.Body.Items() {
 		fmt.Printf("날짜: %d, 이름: %s\n", item.Date, item.Name)
 	}
 }

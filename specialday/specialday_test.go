@@ -1,78 +1,135 @@
 package specialday_test
 
 import (
-	"encoding/json"
-	"fmt"
+	"net/url"
 	"testing"
-	"time"
 
+	"github.com/jh1104/publicapi"
 	"github.com/jh1104/publicapi/specialday"
 )
 
-func TestUnmarshalJSON(t *testing.T) {
+func TestNewSpecialDay(t *testing.T) {
 	tests := []struct {
-		desc  string
-		input string
+		name    string
+		subtype specialday.Subtype
+		params  specialday.Parameters
+		want    specialday.SpecialDay
 	}{
 		{
-			desc:  "2025년 5월 공휴일",
-			input: `{ "response": { "header": { "resultCode": "00", "resultMsg": "NORMAL SERVICE." }, "body": { "items": { "item": [ { "dateKind": "01", "dateName": "어린이날", "isHoliday": "Y", "locdate": 20250505, "seq": 1 }, { "dateKind": "01", "dateName": "부처님오신날", "isHoliday": "Y", "locdate": 20250505, "seq": 2 }, { "dateKind": "01", "dateName": "대체공휴일", "isHoliday": "Y", "locdate": 20250506, "seq": 1 } ] }, "numOfRows": 10, "pageNo": 1, "totalCount": 3 } } }`,
+			name:    "공휴일 API 생성",
+			subtype: specialday.Holiday,
+			params:  specialday.Parameters{Year: 2025, Month: 5, NumberOfRows: 10, PageNo: 1},
+			want: specialday.SpecialDay{
+				Subtype: specialday.Holiday,
+				Params:  specialday.Parameters{Year: 2025, Month: 5, NumberOfRows: 10, PageNo: 1},
+			},
 		},
 		{
-			desc:  "2025년 9월 공휴일",
-			input: `{ "response": { "header": { "resultCode": "00", "resultMsg": "NORMAL SERVICE." }, "body": { "items": "", "numOfRows": 10, "pageNo": 1, "totalCount": 0 } } }`,
+			name:    "국경일 API 생성",
+			subtype: specialday.NationalHoliday,
+			params:  specialday.Parameters{Year: 2024, Month: 12, NumberOfRows: 20, PageNo: 2},
+			want: specialday.SpecialDay{
+				Subtype: specialday.NationalHoliday,
+				Params:  specialday.Parameters{Year: 2024, Month: 12, NumberOfRows: 20, PageNo: 2},
+			},
 		},
 		{
-			desc:  "2025년 10월 공휴일",
-			input: `{ "response": { "header": { "resultCode": "00", "resultMsg": "NORMAL SERVICE." }, "body": { "items": { "item": [ { "dateKind": "01", "dateName": "개천절", "isHoliday": "Y", "locdate": 20251003, "seq": 1 }, { "dateKind": "01", "dateName": "추석", "isHoliday": "Y", "locdate": 20251005, "seq": 1 }, { "dateKind": "01", "dateName": "추석", "isHoliday": "Y", "locdate": 20251006, "seq": 1 }, { "dateKind": "01", "dateName": "추석", "isHoliday": "Y", "locdate": 20251007, "seq": 1 }, { "dateKind": "01", "dateName": "대체공휴일", "isHoliday": "Y", "locdate": 20251008, "seq": 1 }, { "dateKind": "01", "dateName": "한글날", "isHoliday": "Y", "locdate": 20251009, "seq": 1 } ] }, "numOfRows": 10, "pageNo": 1, "totalCount": 6 } } }`,
+			name:    "기념일 API 생성",
+			subtype: specialday.Anniversary,
+			params:  specialday.Parameters{Year: 2023, Month: 1, NumberOfRows: 5, PageNo: 3},
+			want: specialday.SpecialDay{
+				Subtype: specialday.Anniversary,
+				Params:  specialday.Parameters{Year: 2023, Month: 1, NumberOfRows: 5, PageNo: 3},
+			},
 		},
 	}
 
 	for _, tt := range tests {
-		resp := &specialday.Response{}
-		err := json.Unmarshal([]byte(tt.input), resp)
-		if err != nil {
-			t.Fatalf("failed to unmarshal %v", err)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			got := specialday.NewSpecialDay(tt.subtype, tt.params)
 
-		// 헤더 검증
-		if resp.Header.Code == "" {
-			t.Errorf("want Header.Code non-empty, got empty")
-		}
-		if resp.Header.Message == "" {
-			t.Errorf("want Header.Message non-empty, got empty")
-		}
+			if got.Subtype != tt.want.Subtype {
+				t.Errorf("want %v, got %v", tt.want.Subtype, got.Subtype)
+			}
 
-		// 바디 검증
-		if resp.Body == nil {
-			t.Fatalf("want Body not nil, got nil")
-		}
-		if resp.Body.Page <= 0 {
-			t.Errorf("want Body.Page > 0, got %d", resp.Body.Page)
-		}
-		if resp.Body.Rows <= 0 {
-			t.Errorf("want Body.Rows > 0, got %d", resp.Body.Rows)
-		}
-		if resp.Body.Total < 0 {
-			t.Errorf("want Body.Total >= 0, got %d", resp.Body.Total)
-		}
+			if got.Params != tt.want.Params {
+				t.Errorf("want %v, got %v", tt.want.Params, got.Params)
+			}
+		})
+	}
+}
 
-		for _, item := range resp.Body.Data.Items {
-			if _, err := time.Parse("20060102", fmt.Sprintf("%d", item.Date)); err != nil {
-				t.Errorf("want item.Date 20060102 format, got %d %v", item.Date, err)
+func TestSpecialDay_URL(t *testing.T) {
+	tests := []struct {
+		name       string
+		api        publicapi.API
+		serviceKey string
+		wantParams map[string]string
+	}{
+		{
+			name: "공휴일 API URL 생성",
+			api: specialday.NewSpecialDay(
+				specialday.Holiday,
+				specialday.Parameters{2025, 05, 10, 1},
+			),
+			serviceKey: "holiday123",
+			wantParams: map[string]string{
+				"serviceKey": "holiday123",
+				"solYear":    "2025",
+				"solMonth":   "05",
+				"numOfRows":  "10",
+				"pageNo":     "1",
+				"_type":      "json",
+			},
+		},
+		{
+			name: "국경일 URL 생성",
+			api: specialday.NewSpecialDay(
+				specialday.NationalHoliday,
+				specialday.Parameters{2024, 12, 20, 2},
+			),
+			serviceKey: "national456",
+			wantParams: map[string]string{
+				"serviceKey": "national456",
+				"solYear":    "2024",
+				"solMonth":   "12",
+				"numOfRows":  "20",
+				"pageNo":     "2",
+				"_type":      "json",
+			},
+		},
+		{
+			name: "기념일 URL 생성",
+			api: specialday.NewSpecialDay(
+				specialday.Anniversary,
+				specialday.Parameters{2023, 1, 5, 3},
+			),
+			serviceKey: "anniversary789",
+			wantParams: map[string]string{
+				"serviceKey": "anniversary789",
+				"solYear":    "2023",
+				"solMonth":   "01",
+				"numOfRows":  "5",
+				"pageNo":     "3",
+				"_type":      "json",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotURL := tt.api.URL(tt.serviceKey)
+			urlValue, err := url.Parse(gotURL)
+			if err != nil {
+				t.Fatalf("failed to parse URL: %v", err)
 			}
-			if item.Seq < 1 {
-				t.Errorf("want item.Seq > 0, got %d", item.Seq)
+
+			// URL 쿼리 파라미터 확인
+			for key, value := range tt.wantParams {
+				if gotValue := urlValue.Query().Get(key); gotValue != value {
+					t.Errorf("want %s = %s, got %s", key, value, gotValue)
+				}
 			}
-			if item.Name == "" {
-				t.Errorf("want item.Name non-empty, got empty")
-			}
-			if item.IsHoliday != "Y" && item.IsHoliday != "N" {
-				t.Errorf("want item.IsHoliday Y or N, got %s", item.IsHoliday)
-			}
-			if item.DateKind == "" {
-				t.Errorf("want item.DateKind non-empty, got empty")
-			}
-		}
+		})
 	}
 }

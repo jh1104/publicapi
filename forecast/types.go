@@ -1,5 +1,22 @@
 package forecast
 
+// 단기 예보 조회 API의 세부 분류.
+type Subtype int
+
+const (
+	// 초단기 예보 조회
+	UltraShortTermForecast Subtype = iota + 1
+)
+
+func (s Subtype) Path() string {
+	switch s {
+	case UltraShortTermForecast:
+		return "1360000/VilageFcstInfoService_2.0/getUltraSrtFcst"
+	default:
+		return ""
+	}
+}
+
 // 단기 예보 조회 시 사용되는 예보 구분 코드.
 type ForecastCategory string
 

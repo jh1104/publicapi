@@ -20,18 +20,8 @@ func TestUnmarshalJSON(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "정상적인 Body",
-			input: `{
-				"pageNo": 1,
-				"numOfRows": 10,
-				"totalCount": 100,
-				"items": {
-					"item": [
-						{"id": 1, "name": "test1"},
-						{"id": 2, "name": "test2"}
-					]
-				}
-			}`,
+			name:  "정상적인 Body",
+			input: `{ "pageNo": 1, "numOfRows": 10, "totalCount": 100, "items": { "item": [ {"id": 1, "name": "test1"}, {"id": 2, "name": "test2"} ] } }`,
 			want: &publicapi.Body[TestItem]{
 				Page:  1,
 				Rows:  10,
@@ -46,12 +36,8 @@ func TestUnmarshalJSON(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "items 필드가 없는 Body",
-			input: `{
-				"pageNo": 1,
-				"numOfRows": 0,
-				"totalCount": 0
-			}`,
+			name:  "items 필드가 없는 Body",
+			input: `{ "pageNo": 1, "numOfRows": 0, "totalCount": 0 }`,
 			want: &publicapi.Body[TestItem]{
 				Page:  1,
 				Rows:  0,
@@ -63,15 +49,8 @@ func TestUnmarshalJSON(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "items 필드가 빈 배열인 Body",
-			input: `{
-				"pageNo": 1,
-				"numOfRows": 0,
-				"totalCount": 0,
-				"items": {
-					"item": []
-				}
-			}`,
+			name:  "items 필드가 빈 배열인 Body",
+			input: `{ "pageNo": 1, "numOfRows": 0, "totalCount": 0, "items": { "item": [] } }`,
 			want: &publicapi.Body[TestItem]{
 				Page:  1,
 				Rows:  0,
@@ -83,13 +62,8 @@ func TestUnmarshalJSON(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "items 필드가 빈 문자열인 Body",
-			input: `{
-				"pageNo": 1,
-				"numOfRows": 0,
-				"totalCount": 0,
-				"items": ""
-			}`,
+			name:  "items 필드가 빈 문자열인 Body",
+			input: `{ "pageNo": 1, "numOfRows": 0, "totalCount": 0, "items": "" }`,
 			want: &publicapi.Body[TestItem]{
 				Page:  1,
 				Rows:  0,
@@ -101,15 +75,8 @@ func TestUnmarshalJSON(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "items 필드가 빈 객체인 Body",
-			input: `{
-				"pageNo": 1,
-				"numOfRows": 0,
-				"totalCount": 0,
-				"items": {
-					"item": {}
-				}
-			}`,
+			name:    "items 필드가 빈 객체인 Body",
+			input:   `{ "pageNo": 1, "numOfRows": 0, "totalCount": 0, "items": { "item": {} } }`,
 			want:    nil,
 			wantErr: true,
 		},

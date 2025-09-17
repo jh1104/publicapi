@@ -19,26 +19,26 @@ func SetDefaultClient(client *publicapi.Client) {
 	defaultClient.Store(client)
 }
 
-func ListHolidays(ctx context.Context, year, month int) (*Response, error) {
+func ListHolidays(ctx context.Context, params Parameters) (*Response, error) {
 	api := &SpecialDay{
 		Subtype: Holiday,
-		Params:  NewParameters(year, month),
+		Params:  params,
 	}
 	return request(ctx, api)
 }
 
-func ListNationalHolidays(ctx context.Context, year, month int) (*Response, error) {
+func ListNationalHolidays(ctx context.Context, params Parameters) (*Response, error) {
 	api := &SpecialDay{
 		Subtype: NationalHoliday,
-		Params:  NewParameters(year, month),
+		Params:  params,
 	}
 	return request(ctx, api)
 }
 
-func ListAnniversaries(ctx context.Context, year, month int) (*Response, error) {
+func ListAnniversaries(ctx context.Context, params Parameters) (*Response, error) {
 	api := &SpecialDay{
 		Subtype: Anniversary,
-		Params:  NewParameters(year, month),
+		Params:  params,
 	}
 	return request(ctx, api)
 }

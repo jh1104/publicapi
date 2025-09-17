@@ -24,22 +24,19 @@ func TestRequestAPI(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		nx        int
-		ny        int
-		fn        func(ctx context.Context, nx, ny int) (*forecast.Response, error)
+		params    forecast.Parameters
+		fn        func(context.Context, forecast.Parameters) (*forecast.Response, error)
 		wantItems int
 	}{
 		{
 			name:      "서울시청 좌표 초단기예보 조회",
-			nx:        60,
-			ny:        127,
+			params:    forecast.NewParameters(60, 127),
 			fn:        forecast.GetUltraShortTermForecast,
 			wantItems: 10,
 		},
 		{
 			name:      "부산시청 좌표 초단기예보 조회",
-			nx:        98,
-			ny:        76,
+			params:    forecast.NewParameters(98, 76),
 			fn:        forecast.GetUltraShortTermForecast,
 			wantItems: 10,
 		},
@@ -47,7 +44,7 @@ func TestRequestAPI(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			resp, err := tt.fn(context.Background(), tt.nx, tt.ny)
+			resp, err := tt.fn(context.Background(), tt.params)
 			if err != nil {
 				t.Fatalf("failed to request API: %v", err)
 			}

@@ -23,9 +23,9 @@ type Parameters struct {
 	PageNo int
 }
 
-func NewParameters(nx, ny int) *Parameters {
+func NewParameters(nx, ny int) Parameters {
 	baseDate, baseTime := BaseForUltraShortTermForecast(time.Now())
-	return &Parameters{
+	return Parameters{
 		BaseDate:     baseDate,
 		BaseTime:     baseTime,
 		NX:           nx,

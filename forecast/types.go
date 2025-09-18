@@ -43,6 +43,33 @@ const (
 	CategoryWindSpeed ForecastCategory = "WSD"
 )
 
+func (f ForecastCategory) String() string {
+	switch f {
+	case CategoryTemperature:
+		return "기온"
+	case CategoryRainfall:
+		return "1시간 강수량"
+	case CategorySky:
+		return "하늘 상태"
+	case CategoryEastWestWind:
+		return "동서바람성분"
+	case CategoryNorthSouthWind:
+		return "남북바람성분"
+	case CategoryHumidity:
+		return "습도"
+	case CategoryPrecipitation:
+		return "강수 형태"
+	case CategoryLightning:
+		return "낙뢰"
+	case CategoryWindDirection:
+		return "풍향"
+	case CategoryWindSpeed:
+		return "풍속"
+	default:
+		return string(f)
+	}
+}
+
 // 강수형태 코드.
 type PrecipitationCode string
 
@@ -65,6 +92,29 @@ const (
 	PrecipitationCodeSnowGrain PrecipitationCode = "7"
 )
 
+func (p PrecipitationCode) String() string {
+	switch p {
+	case PrecipitationCodeNone:
+		return "없음"
+	case PrecipitationCodeRain:
+		return "비"
+	case PrecipitationCodeRainSnow:
+		return "비/눈"
+	case PrecipitationCodeSnow:
+		return "눈"
+	case PrecipitationCodeShower:
+		return "소나기"
+	case PrecipitationCodeDrizzle:
+		return "빗방울"
+	case PrecipitationCodeSleet:
+		return "진눈깨비"
+	case PrecipitationCodeSnowGrain:
+		return "눈날림"
+	default:
+		return string(p)
+	}
+}
+
 // 하늘상태 코드.
 type SkyCode string
 
@@ -78,3 +128,18 @@ const (
 	// 흐림
 	SkyCodeCloudy SkyCode = "4"
 )
+
+func (s SkyCode) String() string {
+	switch s {
+	case SkyCodeClear:
+		return "맑음"
+	case SkyCodeFewClouds:
+		return "구름 조금"
+	case SkyCodePartlyCloudy:
+		return "구름 많음"
+	case SkyCodeCloudy:
+		return "흐림"
+	default:
+		return string(s)
+	}
+}

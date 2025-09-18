@@ -42,9 +42,7 @@ func TestUnmarshalJSON(t *testing.T) {
 				Page:  1,
 				Rows:  0,
 				Total: 0,
-				Data: publicapi.BodyData[TestItem]{
-					Items: nil,
-				},
+				Data:  publicapi.BodyData[TestItem]{},
 			},
 			wantErr: false,
 		},
@@ -55,9 +53,7 @@ func TestUnmarshalJSON(t *testing.T) {
 				Page:  1,
 				Rows:  0,
 				Total: 0,
-				Data: publicapi.BodyData[TestItem]{
-					Items: []TestItem{},
-				},
+				Data:  publicapi.BodyData[TestItem]{},
 			},
 			wantErr: false,
 		},
@@ -68,9 +64,7 @@ func TestUnmarshalJSON(t *testing.T) {
 				Page:  1,
 				Rows:  0,
 				Total: 0,
-				Data: publicapi.BodyData[TestItem]{
-					Items: nil,
-				},
+				Data:  publicapi.BodyData[TestItem]{},
 			},
 			wantErr: false,
 		},

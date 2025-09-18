@@ -6,7 +6,7 @@ type Response[T any] struct {
 	// 응답 헤더.
 	Header Header `json:"header" xml:"header"`
 	// 응답 본문.
-	Body *Body[T] `json:"body,omitempty" xml:"body"`
+	Body Body[T] `json:"body" xml:"body"`
 }
 
 type Header struct {

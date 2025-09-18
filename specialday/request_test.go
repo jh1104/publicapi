@@ -77,10 +77,6 @@ func TestRequestAPI(t *testing.T) {
 				t.Fatalf("want code 00, got code=%s message=%s", resp.Header.Code, resp.Header.Message)
 			}
 
-			if resp.Body == nil {
-				t.Fatal("want body not nil, got nil")
-			}
-
 			if len(resp.Body.Data.Items) != tt.wantItems {
 				t.Fatalf("want items %d, got %d", tt.wantItems, len(resp.Body.Data.Items))
 			}

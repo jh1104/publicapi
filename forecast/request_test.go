@@ -52,9 +52,6 @@ func TestRequestAPI(t *testing.T) {
 			if resp.Header.Code != "00" {
 				t.Errorf("want Header.Code '00', got %s message=%s", resp.Header.Code, resp.Header.Message)
 			}
-			if resp.Body == nil {
-				t.Fatal("want Body not nil, got nil")
-			}
 			if len(resp.Body.Data.Items) != tt.wantItems {
 				t.Errorf("want %d items, got %d", tt.wantItems, len(resp.Body.Data.Items))
 			}

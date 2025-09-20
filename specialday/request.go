@@ -19,6 +19,7 @@ func SetDefaultClient(client *publicapi.Client) {
 	defaultClient.Store(client)
 }
 
+// 주어진 Parameters를 사용하여 공휴일을 조회한다.
 func ListHolidays(ctx context.Context, params Parameters) (*Response, error) {
 	api := &SpecialDay{
 		Subtype: Holiday,
@@ -27,6 +28,7 @@ func ListHolidays(ctx context.Context, params Parameters) (*Response, error) {
 	return request(ctx, api)
 }
 
+// 주어진 Parameters를 사용하여 국경일을 조회한다.
 func ListNationalHolidays(ctx context.Context, params Parameters) (*Response, error) {
 	api := &SpecialDay{
 		Subtype: NationalHoliday,
@@ -35,6 +37,7 @@ func ListNationalHolidays(ctx context.Context, params Parameters) (*Response, er
 	return request(ctx, api)
 }
 
+// 주어진 Parameters를 사용하여 기념일을 조회한다.
 func ListAnniversaries(ctx context.Context, params Parameters) (*Response, error) {
 	api := &SpecialDay{
 		Subtype: Anniversary,

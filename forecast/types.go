@@ -8,6 +8,7 @@ const (
 	UltraShortTermForecast Subtype = iota + 1
 )
 
+// Subtype에 해당하는 API 경로를 한다.
 func (s Subtype) Path() string {
 	switch s {
 	case UltraShortTermForecast:

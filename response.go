@@ -2,6 +2,7 @@ package publicapi
 
 import "encoding/json"
 
+// 공공데이터포털 API 응답.
 type Response[T any] struct {
 	// 응답 헤더.
 	Header Header `json:"header" xml:"header"`
@@ -9,6 +10,7 @@ type Response[T any] struct {
 	Body Body[T] `json:"body" xml:"body"`
 }
 
+// 응답 헤더.
 type Header struct {
 	// 결과 코드.
 	Code string `json:"resultCode" xml:"resultCode"`
@@ -16,6 +18,8 @@ type Header struct {
 	Message string `json:"resultMsg" xml:"resultMsg"`
 }
 
+// 응답 본문.
+// API 종류에 따라 Body가 없는 경우도 있다.
 type Body[T any] struct {
 	// 페이지 번호.
 	Page int `json:"pageNo" xml:"pageNo"`

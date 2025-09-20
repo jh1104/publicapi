@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// 단기 예보 조회 API 파라미터.
 type Parameters struct {
 	// 20250101 포맷의 발표 일자.
 	BaseDate string
@@ -35,7 +36,7 @@ func NewParameters(nx, ny int) Parameters {
 	}
 }
 
-// 현재 Parameters에서 페이지 번호를 1 증가시킨 새로운 Parameters를 반환합니다.
+// 현재 Parameters에서 페이지 번호를 1 증가시킨 새로운 Parameters를 반환한다.
 func (p Parameters) NextPage() Parameters {
 	p.PageNo++
 	return p

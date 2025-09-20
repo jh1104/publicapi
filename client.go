@@ -31,7 +31,7 @@ func NewClient(serviceKey string) *Client {
 	}
 }
 
-// 주어진 API를 수행하고, 응답 바디를 바이트 슬라이스로 반환합니다.
+// 주어진 API를 수행하고, 응답 바디를 바이트 슬라이스로 반환한다.
 func (c *Client) RequestAPI(ctx context.Context, api API) ([]byte, error) {
 	req, err := http.NewRequestWithContext(ctx, api.Method(), api.URL(c.ServiceKey), api.Body())
 	if err != nil {

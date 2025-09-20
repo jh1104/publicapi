@@ -12,7 +12,7 @@ const (
 	Anniversary
 )
 
-// Subtype에 해당하는 API 경로를 반환합니다.
+// Subtype에 해당하는 API 경로를 한다.
 func (a Subtype) Path() string {
 	switch a {
 	case Holiday:

@@ -6,6 +6,7 @@ import (
 	"github.com/jh1104/publicapi"
 )
 
+// 특일 조회 API의 응답.
 type Response publicapi.Response[Item]
 
 func (r *Response) UnmarshalJSON(data []byte) error {
@@ -20,6 +21,7 @@ func (r *Response) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// 특일 조회 API의 응답 데이터.
 type Item struct {
 	// 20060102 포맷의 날짜.
 	Date int `json:"locdate"`

@@ -19,6 +19,7 @@ func SetDefaultClient(client *publicapi.Client) {
 	defaultClient.Store(client)
 }
 
+// 주어진 Parameters를 사용하여 초단기예보를 조회한다.
 func GetUltraShortTermForecast(ctx context.Context, params Parameters) (*Response, error) {
 	api := &Forecast{
 		Subtype: UltraShortTermForecast,

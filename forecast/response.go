@@ -6,6 +6,7 @@ import (
 	"github.com/jh1104/publicapi"
 )
 
+// 단기예보 조회 API의 응답.
 type Response publicapi.Response[Item]
 
 func (r *Response) UnmarshalJSON(data []byte) error {
@@ -20,6 +21,7 @@ func (r *Response) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// 단기예보 조회 API의 응답 데이터.
 type Item struct {
 	// 20250101 포맷의 발표 일자.
 	BaseDate string `json:"baseDate"`

@@ -22,7 +22,7 @@ func NewParameters(year int, month int) Parameters {
 	}
 }
 
-// 현재 Parameters에서 페이지 번호를 1 증가시킨 새로운 Parameters를 반환합니다.
+// 현재 Parameters에서 페이지 번호를 1 증가시킨 새로운 Parameters를 반환한다.
 func (p Parameters) NextPage() Parameters {
 	p.PageNo++
 	return p

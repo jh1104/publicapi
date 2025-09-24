@@ -6,6 +6,7 @@ type Subtype int
 const (
 	// 초단기 예보 조회
 	UltraShortTermForecast Subtype = iota + 1
+	ShortTermForecast
 )
 
 // Subtype에 해당하는 API 경로를 반환한다.
@@ -13,6 +14,8 @@ func (s Subtype) Path() string {
 	switch s {
 	case UltraShortTermForecast:
 		return "1360000/VilageFcstInfoService_2.0/getUltraSrtFcst"
+	case ShortTermForecast:
+		return "1360000/VilageFcstInfoService_2.0/getVilageFcst"
 	default:
 		return ""
 	}
@@ -42,6 +45,16 @@ const (
 	CategoryWindDirection ForecastCategory = "VEC"
 	// 풍속 (m/s).
 	CategoryWindSpeed ForecastCategory = "WSD"
+	// 강수량 (mm).
+	CategoryPrecipitationAmount ForecastCategory = "PCP"
+	// 강수 확률 (%).
+	CategoryPrecipitationProbability ForecastCategory = "POP"
+	// 눈의 양 (cm).
+	CategorySnowfall ForecastCategory = "SNO"
+	// 일 최저기온 (°C)
+	CategoryDailyMinTemperature ForecastCategory = "TMN"
+	// 일 최고기온 (°C)
+	CategoryDailyMaxTemperature ForecastCategory = "TMX"
 )
 
 func (f ForecastCategory) String() string {

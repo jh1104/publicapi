@@ -2,6 +2,7 @@ package forecast
 
 import (
 	"fmt"
+	"slices"
 	"time"
 )
 
@@ -11,7 +12,11 @@ type Parameters struct {
 	BaseDate string
 	// 0930 포맷의 발표 시간.
 	//
-	// 초단기 예보는 매 시간 30분마다 발표한다.
+	// 초단기 예보는 매 시간 30분마다 발표하며 45분부터 조회할 수 있다.
+	// 0030, 0130, 0230, ..., 2330 (1일 24회)
+	//
+	// 단기 예보는 매 3시간마다 발표하며 10분부터 조회할 수 있다.
+	// 0200, 0500, 0800, 1100, 1400, 1700, 2000, 2300 (1일 8회)
 	BaseTime string
 	// 예보 지점의 X 좌표.
 	NX int
@@ -46,14 +51,31 @@ func (p Parameters) NextPage() Parameters {
 func BaseForUltraShortTermForecast(t time.Time) (baseDate string, baseTime string) {
 	base := t
 
-	// 초단기예보는 매시간 30분에 발표되므로,
-	// 현재 분이 30분 미만이면 이전 시간의 30분, 30분 이상이면 현재 시간의 30분을 사용한다.
-	if base.Minute() < 30 {
+	// 초단기 예보는 매 시간 30분마다 발표하며 45분부터 조회할 수 있다.
+	if base.Minute() < 45 {
 		base = base.Add(-time.Hour)
 	}
 
 	baseDate = base.Format("20060102")
 	baseTime = fmt.Sprintf("%02d30", base.Hour())
+
+	return baseDate, baseTime
+}
+
+func BaseForShortTermForecast(t time.Time) (baseDate string, baseTime string) {
+	base := t
+
+	// 단기 예보는 매 3시간마다 발표하며 10분부터 조회할 수 있다.
+	if base.Minute() < 10 {
+		base = base.Add(-time.Hour)
+	}
+	hours := []int{2, 5, 8, 11, 14, 17, 20, 23}
+	for !slices.Contains(hours, base.Hour()) {
+		base = base.Add(-time.Hour)
+	}
+
+	baseDate = base.Format("20060102")
+	baseTime = fmt.Sprintf("%02d00", base.Hour())
 
 	return baseDate, baseTime
 }

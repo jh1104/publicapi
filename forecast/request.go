@@ -28,6 +28,14 @@ func GetUltraShortTermForecast(ctx context.Context, params Parameters) (*Respons
 	return request(ctx, api)
 }
 
+func GetShortTermForecast(ctx context.Context, params Parameters) (*Response, error) {
+	api := &Forecast{
+		Subtype: ShortTermForecast,
+		Params:  params,
+	}
+	return request(ctx, api)
+}
+
 func request(ctx context.Context, api publicapi.API) (*Response, error) {
 	client := DefaultClient()
 	if client == nil {

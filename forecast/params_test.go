@@ -58,14 +58,43 @@ func TestBaseForUltraShortTermForecast(t *testing.T) {
 		wantTime string
 	}{
 		{"2025-01-01 00:00", time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC), "20241231", "2330"},
-		{"2025-01-01 00:40", time.Date(2025, 1, 1, 0, 40, 0, 0, time.UTC), "20250101", "0030"},
-		{"2025-01-01 23:30", time.Date(2025, 1, 1, 23, 30, 0, 0, time.UTC), "20250101", "2330"},
-		{"2025-01-01 23:40", time.Date(2025, 1, 1, 23, 40, 0, 0, time.UTC), "20250101", "2330"},
+		{"2025-01-01 00:40", time.Date(2025, 1, 1, 0, 40, 0, 0, time.UTC), "20241231", "2330"},
+		{"2025-01-01 00:45", time.Date(2025, 1, 1, 0, 45, 0, 0, time.UTC), "20250101", "0030"},
+		{"2025-01-01 23:30", time.Date(2025, 1, 1, 23, 30, 0, 0, time.UTC), "20250101", "2230"},
+		{"2025-01-01 23:50", time.Date(2025, 1, 1, 23, 50, 0, 0, time.UTC), "20250101", "2330"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotDate, gotTime := forecast.BaseForUltraShortTermForecast(tt.input)
+			if gotDate != tt.wantDate {
+				t.Errorf("want date %s, got %s", tt.wantDate, gotDate)
+			}
+			if gotTime != tt.wantTime {
+				t.Errorf("want time %s, got %s", tt.wantTime, gotTime)
+			}
+		})
+	}
+}
+
+func TestBaseForShortTermForecast(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    time.Time
+		wantDate string
+		wantTime string
+	}{
+		{"2025-01-01 00:00", time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC), "20241231", "2300"},
+		{"2025-01-01 00:40", time.Date(2025, 1, 1, 0, 40, 0, 0, time.UTC), "20241231", "2300"},
+		{"2025-01-01 02:00", time.Date(2025, 1, 1, 2, 0, 0, 0, time.UTC), "20241231", "2300"},
+		{"2025-01-01 02:10", time.Date(2025, 1, 1, 2, 10, 0, 0, time.UTC), "20250101", "0200"},
+		{"2025-01-01 23:00", time.Date(2025, 1, 1, 23, 0, 0, 0, time.UTC), "20250101", "2000"},
+		{"2025-01-01 23:10", time.Date(2025, 1, 1, 23, 10, 0, 0, time.UTC), "20250101", "2300"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotDate, gotTime := forecast.BaseForShortTermForecast(tt.input)
 			if gotDate != tt.wantDate {
 				t.Errorf("want date %s, got %s", tt.wantDate, gotDate)
 			}

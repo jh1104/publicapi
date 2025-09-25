@@ -2,6 +2,7 @@ package publicapi_test
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"testing"
 
 	"github.com/jh1104/publicapi"
@@ -112,6 +113,35 @@ func TestUnmarshalJSON(t *testing.T) {
 				if item != tt.want.Data.Items[i] {
 					t.Errorf("want item %v, got %v", tt.want.Data.Items[i], item)
 				}
+			}
+		})
+	}
+}
+
+func TestUnmarshalErrorResponse(t *testing.T) {
+	tests := []struct {
+		name    string
+		input   string
+		wantErr error
+	}{
+		{
+			name:    "Invalid Service Key",
+			input:   `<OpenAPI_ServiceResponse> <cmmMsgHeader> <errMsg>SERVICE ERROR</errMsg> <returnAuthMsg>SERVICE_KEY_IS_NOT_REGISTERED_ERROR</returnAuthMsg> <returnReasonCode>30</returnReasonCode> </cmmMsgHeader> </OpenAPI_ServiceResponse>`,
+			wantErr: publicapi.ErrInvalidKey,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resp := &publicapi.ErrorResponse{}
+			err := xml.Unmarshal([]byte(tt.input), resp)
+			if err != nil {
+				t.Fatalf("failed to unmarshal XML: %v", err)
+			}
+
+			gotErr := resp.AsError()
+			if gotErr != tt.wantErr {
+				t.Errorf("want error %v, got %v", tt.wantErr, gotErr)
 			}
 		})
 	}

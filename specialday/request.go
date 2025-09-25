@@ -3,6 +3,7 @@ package specialday
 import (
 	"context"
 	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"sync/atomic"
 
@@ -55,6 +56,14 @@ func request(ctx context.Context, api publicapi.API) (*Response, error) {
 	data, err := client.RequestAPI(ctx, api)
 	if err != nil {
 		return nil, err
+	}
+
+	if len(data) > 0 && data[0] == '<' {
+		resp := &publicapi.ErrorResponse{}
+		if err := xml.Unmarshal(data, resp); err == nil && resp.AsError() != nil {
+			return nil, resp.AsError()
+		}
+		return nil, errors.New("received XML response instead of JSON")
 	}
 
 	resp := &Response{}

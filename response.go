@@ -47,3 +47,15 @@ func (b *BodyData[T]) UnmarshalJSON(data []byte) error {
 	b.Items = raw.Items
 	return nil
 }
+
+// 에러 응답 구조체.
+type ErrorResponse struct {
+	Header struct {
+		ReasonCode ResultCode `xml:"returnReasonCode"`
+	} `xml:"cmmMsgHeader"`
+}
+
+// 에러 원인 코드.
+func (e *ErrorResponse) AsError() error {
+	return e.Header.ReasonCode.AsError()
+}

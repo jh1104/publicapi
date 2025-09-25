@@ -45,7 +45,7 @@ var (
 	ErrNoAPIService = errors.New("no api service")
 	// 서비스 접근거부.
 	ErrAccessDenied = errors.New("service access denied")
-	// 일시적으로 사용할 수 없는 서비스 키.`
+	// 일시적으로 사용할 수 없는 서비스 키.
 	ErrDisabledKey = errors.New("temporarily disabled service key")
 	// 서비스 요청제한횟수 초과.
 	ErrLimitExceeded = errors.New("request limit exceeded")
